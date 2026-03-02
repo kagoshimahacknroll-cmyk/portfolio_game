@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>侍の領国経営 - Bushi Life</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>侍の領国経営</h1>
+            <div class="player-info">
+                <div class="player-name">
+                    <label for="playerName">大名名:</label>
+                    <input type="text" id="playerName" value="織田信長" maxlength="20">
+                </div>
+                <div class="year-display">
+                    <span>年号: <span id="currentYear">天正元年</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="territory-map">
+                <h2>領地</h2>
+                <div class="map-container">
+                    <canvas id="territoryCanvas" width="400" height="300"></canvas>
+                    <div class="map-overlay">
+                        <div class="castle-info">
+                            <span id="castleName">質素な城</span>
+                            <span id="castleLevel">Lv.1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resources-panel">
+                <h2>領国状況</h2>
+                <div class="resource-grid">
+                    <div class="resource-item">
+                        <span class="resource-icon">🍚</span>
+                        <span class="resource-label">米</span>
+                        <span class="resource-value" id="rice">1000</span>
+                        <span class="resource-per-turn">+50/月</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">💰</span>
+                        <span class="resource-label">金</span>
+                        <span class="resource-value" id="gold">500</span>
+                        <span class="resource-per-turn">+25/月</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">👥</span>
+                        <span class="resource-label">人口</span>
+                        <span class="resource-value" id="population">2000</span>
+                        <span class="resource-per-turn">+10/月</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">⚔️</span>
+                        <span class="resource-label">兵力</span>
+                        <span class="resource-value" id="military">100</span>
+                        <span class="resource-per-turn">+5/月</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">🏛️</span>
+                        <span class="resource-label">領地</span>
+                        <span class="resource-value" id="territory">1</span>
+                        <span class="resource-per-turn">安定</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">⭐</span>
+                        <span class="resource-label">名声</span>
+                        <span class="resource-value" id="reputation">50</span>
+                        <span class="resource-per-turn">+2/月</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-panel">
+                <div class="action-tabs">
+                    <button class="tab-button active" data-tab="training">鍛錬</button>
+                    <button class="tab-button" data-tab="agriculture">農業</button>
+                    <button class="tab-button" data-tab="politics">政治</button>
+                    <button class="tab-button" data-tab="military">軍事</button>
+                    <button class="tab-button" data-tab="events">事件</button>
+                </div>
+
+                <div class="tab-content active" id="training-tab">
+                    <h3>鍛錬・訓練</h3>
+                    <div class="action-grid">
+                        <div class="action-card">
+                            <h4>剣術訓練</h4>
+                            <p>個人の戦闘力を向上させる</p>
+                            <div class="cost">費用: 金 50</div>
+                            <button class="action-button" onclick="trainSwordsmanship()">訓練開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>兵法研究</h4>
+                            <p>戦略・戦術の知識を深める</p>
+                            <div class="cost">費用: 金 100</div>
+                            <button class="action-button" onclick="studyStrategy()">研究開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>体力鍛錬</h4>
+                            <p>持久力と健康を向上させる</p>
+                            <div class="cost">費用: 金 30</div>
+                            <button class="action-button" onclick="trainPhysical()">鍛錬開始</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="agriculture-tab">
+                    <h3>農業・栽培</h3>
+                    <div class="action-grid">
+                        <div class="action-card">
+                            <h4>田畑開墾</h4>
+                            <p>新しい農地を開拓する</p>
+                            <div class="cost">費用: 金 200, 人口 50</div>
+                            <button class="action-button" onclick="developFarmland()">開墾開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>灌漑整備</h4>
+                            <p>水田の生産性を向上させる</p>
+                            <div class="cost">費用: 金 150</div>
+                            <button class="action-button" onclick="improveIrrigation()">整備開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>新作物導入</h4>
+                            <p>新しい作物を栽培する</p>
+                            <div class="cost">費用: 金 100</div>
+                            <button class="action-button" onclick="introduceNewCrop()">導入開始</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="politics-tab">
+                    <h3>政治・統治</h3>
+                    <div class="action-grid">
+                        <div class="action-card">
+                            <h4>税制改革</h4>
+                            <p>税収を安定させる</p>
+                            <div class="cost">費用: 金 300</div>
+                            <button class="action-button" onclick="reformTax()">改革開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>法制度整備</h4>
+                            <p>領内の治安を向上させる</p>
+                            <div class="cost">費用: 金 250</div>
+                            <button class="action-button" onclick="establishLaws()">整備開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>外交活動</h4>
+                            <p>他国との関係を改善する</p>
+                            <div class="cost">費用: 金 200</div>
+                            <button class="action-button" onclick="diplomacy()">外交開始</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="military-tab">
+                    <h3>軍事・防衛</h3>
+                    <div class="action-grid">
+                        <div class="action-card">
+                            <h4>兵士募集</h4>
+                            <p>兵力を増強する</p>
+                            <div class="cost">費用: 金 150, 米 100</div>
+                            <button class="action-button" onclick="recruitSoldiers()">募集開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>城郭建設</h4>
+                            <p>防御力を向上させる</p>
+                            <div class="cost">費用: 金 500, 人口 100</div>
+                            <button class="action-button" onclick="buildCastle()">建設開始</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>武器製造</h4>
+                            <p>装備を改良する</p>
+                            <div class="cost">費用: 金 200</div>
+                            <button class="action-button" onclick="manufactureWeapons()">製造開始</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="events-tab">
+                    <h3>事件・出来事</h3>
+                    <div class="event-log" id="eventLog">
+                        <div class="event-item">
+                            <span class="event-date">天正元年 1月</span>
+                            <span class="event-text">領国経営を開始しました。平和な時代の始まりです。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-button" id="nextMonth">次の月へ</button>
+            <button class="control-button" id="saveGame">ゲーム保存</button>
+            <button class="control-button" id="loadGame">ゲーム読み込み</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
